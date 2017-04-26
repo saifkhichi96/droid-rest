@@ -3,15 +3,22 @@ package sfllhkhan95.android.rest.demo;
 
 public class Greeting {
 
-    private String id;
-    private String content;
+    private String sender;
+    private String message;
 
-    public String getId() {
-        return this.id;
+    public String getSender() {
+        return this.sender;
     }
 
-    public String getContent() {
-        return this.content;
+    public String getMessage() {
+        return this.message;
     }
 
+    public void setSender(String id) {
+        this.sender = id;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }
