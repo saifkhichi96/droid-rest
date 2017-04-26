@@ -2,110 +2,96 @@ package sfllhkhan95.android.rest;
 
 
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.HashMap;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import sfllhkhan95.android.rest.exception.HttpServerException;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-public class HttpRequest extends AsyncTask<Object, Void, Object> {
+import java.io.IOException;
+
+public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
     private final HttpServer httpServer;
-    private ResponseHandler responseHandler;
-    private HashMap<String, String> args;
-    private String targetUrl;
-    private Class dataType;
-    private ViewGroup parent;
+    private final String targetUrl;
+    private final Class<Entity> dataType;
 
-    public HttpRequest(HttpServer httpServer, String targetUrl) {
+    private ResponseHandler<Entity> responseHandler;
+    private String payload;
+    private ViewGroup statusContainer;
+
+    public HttpRequest(@NotNull HttpServer httpServer, String targetUrl, @NotNull Class<Entity> type) {
         this.httpServer = httpServer;
         this.targetUrl = targetUrl;
-
-        args = new HashMap<>();
+        this.dataType = type;
     }
 
-    public void setResponseHandler(ResponseHandler handler) {
-        this.responseHandler = handler;
-    }
-
-    public void addArgument(String key, String value) {
-        value = value
-                .replace("%", "%25")
-                .replace("=", "3D")
-                .replace(" ", "%20")
-                .replace("\n", "%0A")
-                .replace("+", "%2B")
-                .replace("-", "%2D")
-                .replace("#", "%23")
-                .replace("&", "%26");
-
-        key = key
-                .replace("%", "%25")
-                .replace("=", "3D")
-                .replace(" ", "%20")
-                .replace("\n", "%0A")
-                .replace("+", "%2B")
-                .replace("-", "%2D")
-                .replace("#", "%23")
-                .replace("&", "%26");
-
-        args.put(key, value);
-    }
-
-    private String buildUrl() {
-        String url = targetUrl;
-        if (args.size() > 0) {
-            url += "?";
-            for (HashMap.Entry<String, String> entry : args.entrySet()) {
-                url += entry.getKey() + "=" + entry.getValue() + "&";
-            }
-        }
-        return url;
-    }
-
-    public void requestObject(Class<?> type, Object... params) {
+    public void setPayload(@NotNull Object payload) {
         try {
-            this.dataType = type;
-            this.execute(params);
-        } catch (IllegalStateException ignored) {
+            ObjectMapper mapper = new MappingJackson2HttpMessageConverter().getObjectMapper();
+            this.payload = mapper.writeValueAsString(payload);
 
-        }
-    }
-
-    public void requestObject(LayoutInflater inflater, ViewGroup parent, Class<?> type, Object... params) {
-        this.parent = parent;
-        inflater.inflate(R.layout.status, parent, true);
-
-        try {
-            this.dataType = type;
-            this.execute(params);
-        } catch (IllegalStateException ignored) {
-
-        }
-    }
-
-    @Override
-    protected Object doInBackground(Object... params) {
-        try {
-            return httpServer.getObject(buildUrl(), this.dataType);
-        } catch (HttpServerException e) {
+            this.payload = this.payload
+                    .replace("%", "%25")
+                    .replace("=", "3D")
+                    .replace(" ", "%20")
+                    .replace("\n", "%0A")
+                    .replace("+", "%2B")
+                    .replace("-", "%2D")
+                    .replace("#", "%23")
+                    .replace("&", "%26");
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+    }
 
-        return null;
+    public void showStatus(@NotNull LayoutInflater inflater, @NotNull ViewGroup parent) {
+        this.statusContainer = parent;
+        inflater.inflate(R.layout.status, parent, true);
+    }
+
+    public void sendRequest(ResponseHandler<Entity> responseHandler) {
+        this.responseHandler = responseHandler;
+        this.execute();
+    }
+
+    @Nullable
+    @Override
+    protected final Entity doInBackground(Void... params) {
+        Entity entity = null;
+        try {
+            entity = (Entity) httpServer.getObject(buildUrl(), this.dataType);
+        } catch (IOException ignored) {
+
+        }
+
+        return entity;
     }
 
     @Override
-    protected void onPostExecute(Object result) {
+    protected final void onPostExecute(@Nullable Entity entity) {
         try {
-            parent.removeView(parent.getChildAt(parent.getChildCount() - 1));
+            statusContainer.removeView(statusContainer.getChildAt(statusContainer.getChildCount() - 1));
         } catch (NullPointerException ignored) {
 
         } finally {
             if (responseHandler != null) {
-                responseHandler.execute(result);
+                responseHandler.onResponseReceived(entity);
             }
         }
     }
+
+    @Contract(pure = true)
+    private String buildUrl() {
+        if (this.payload == null) {
+            return this.targetUrl;
+        } else {
+            return this.targetUrl + "?payload=" + this.payload;
+        }
+    }
+
 }
