@@ -8,7 +8,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -39,3 +39,32 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
     compile 'org.jetbrains:annotations-java5:15.0'
 }
+
+ext {
+    //For bintray and jcenter distribution
+    bintrayRepo = 'maven'
+    bintrayName = 'droid-rest'
+
+    publishedGroupId = 'sfllhkhan95.android.rest'
+    libraryName = 'DroidREST'
+    artifact = 'api' //This artifact name should be the same with library module name
+
+    libraryDescription = 'DroidREST provides interface to Android applications for exchanging POJO objects with a remote server.'
+
+    siteUrl = 'https://github.com/sfllhkhan95/droid-rest'
+    gitUrl = 'https://github.com/sfllhkhan95/droid-resty.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = '1'
+    developerName = 'Muhammad Saif Ullah Khan'
+    developerEmail = 'saifkhichi96@gmail.com'
+    organization = 'bytexcite' // if you push to organization's repository.
+    licenseName = 'MIT License'  //Example for license
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT"]
+
+}
+//These two remote files contain Bintray configuration as described above.
+apply from: 'https://raw.githubusercontent.com/quangctkm9207/template-files/master/android/gradle/install.gradle'
+apply from: 'https://raw.githubusercontent.com/quangctkm9207/template-files/master/android/gradle/bintray.gradle'
