@@ -88,6 +88,8 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
     private String buildUrl() {
         if (this.payload == null) {
             return this.targetUrl;
+        } else if (this.targetUrl.contains("?")) {
+            return this.targetUrl + "&payload=" + this.payload;
         } else {
             return this.targetUrl + "?payload=" + this.payload;
         }
