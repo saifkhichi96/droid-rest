@@ -3,7 +3,6 @@ package sfllhkhan95.android.rest;
 
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -49,9 +48,9 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
         }
     }
 
-    public void showStatus(@NotNull LayoutInflater inflater, @NotNull ViewGroup parent) {
+    public void showStatus(@NotNull ViewGroup parent) {
         this.statusContainer = parent;
-        inflater.inflate(R.layout.status, parent, true);
+        ViewGroup.inflate(parent.getContext(), R.layout.status, parent);
     }
 
     public void sendRequest(ResponseHandler<Entity> responseHandler) {
