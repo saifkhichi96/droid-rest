@@ -47,7 +47,7 @@ ext {
 
     publishedGroupId = 'sfllhkhan95.android.rest'
     libraryName = 'DroidREST'
-    artifact = 'api' //This artifact name should be the same with library module name
+    artifact = 'api'
 
     libraryDescription = 'DroidREST provides interface to Android applications for exchanging POJO objects with a remote server.'
 
@@ -59,7 +59,7 @@ ext {
     developerId = '1'
     developerName = 'Muhammad Saif Ullah Khan'
     developerEmail = 'saifkhichi96@gmail.com'
-    organization = 'bytexcite' // if you push to organization's repository.
+    organization = ''
     licenseName = 'MIT License'  //Example for license
     licenseUrl = 'https://opensource.org/licenses/MIT'
     allLicenses = ["MIT"]
