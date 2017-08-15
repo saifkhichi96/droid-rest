@@ -8,15 +8,26 @@ to exchange POJO objects with a remote server.
 3. Receive POJO class objects in HTTP response.
 
 # How to Use
-1. In your project's `build.gradle` file, add the following code:
+## Installation
+1. Open  `build.gradle` file of your Android project's module
+2. Add dependency to this library using:
 ```
-repositories {
-  jcenter()
-  maven {
-    url  "http://dl.bintray.com/bytexcite/maven/" // add this maven block inside repositories block
+dependencies {
+  ...
+  compile 'sfllhkhan95.android.rest:api:1.0.0'
+}
+```
+3. Add the following packaging options:
+```
+android {
+  ...
+  packagingOptions {
+    exclude 'META-INF/ASL2.0'
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/license.txt'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/notice.txt'
   }
 }
 ```
-2. Compile library by adding `compile 'sfllhkhan95.android.rest:api:1.0.0'` to `build.gradle` of your module.
-
-
+4. Sync gradle
