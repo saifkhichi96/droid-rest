@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.net.MalformedURLException;
 
+import sfllhkhan95.android.rest.HttpMethod;
 import sfllhkhan95.android.rest.HttpRequest;
 import sfllhkhan95.android.rest.HttpServer;
 import sfllhkhan95.android.rest.ResponseHandler;
@@ -24,7 +25,7 @@ public class DemoActivity extends AppCompatActivity implements ResponseHandler<G
         setContentView(R.layout.demo);
 
         try {
-            httpServer = new HttpServer("http://10.0.3.2/libs/android");
+            httpServer = new HttpServer("http://192.168.43.223/libs/droid-rest/");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -39,9 +40,14 @@ public class DemoActivity extends AppCompatActivity implements ResponseHandler<G
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            sendRequest();
-            return true;
+        switch (id) {
+            case R.id.action_get_request:
+                sendRequest("get");
+                return true;
+
+            case R.id.action_post_request:
+                sendRequest("post");
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -50,13 +56,28 @@ public class DemoActivity extends AppCompatActivity implements ResponseHandler<G
     public void onResponseReceived(@Nullable Greeting entity) {
         TextView greetingIdText = (TextView) findViewById(R.id.id_value);
         TextView greetingContentText = (TextView) findViewById(R.id.content_value);
-        greetingIdText.setText(entity.getSender());
-        greetingContentText.setText(entity.getMessage());
+
+        if (entity != null) {
+            greetingIdText.setText(entity.getSender());
+            greetingContentText.setText(entity.getMessage());
+        }
     }
 
-    private void sendRequest() {
-        HttpRequest<Greeting> httpRequest = new HttpRequest<>(httpServer, "ping.php", Greeting.class);
-        httpRequest.showStatus(getLayoutInflater(), (ViewGroup) findViewById(R.id.activity_demo));
+    private void sendRequest(String method) {
+        HttpRequest<Greeting> httpRequest = new HttpRequest<>(httpServer, "demo-server-side.php", Greeting.class);
+        httpRequest.showStatus((ViewGroup) findViewById(R.id.activity_demo));
+
+        Greeting greeting = new Greeting();
+        greeting.setSender(getString(R.string.app_name));
+        greeting.setMessage("To be, or to not be?!");
+        httpRequest.setPayload(greeting);
+
+        if (method.equals("get")) {
+            httpRequest.setMethod(HttpMethod.GET);
+        } else if (method.equals("post")) {
+            httpRequest.setMethod(HttpMethod.POST);
+        }
+
         httpRequest.sendRequest(this);
     }
 }

@@ -43,16 +43,6 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
         try {
             ObjectMapper mapper = new MappingJackson2HttpMessageConverter().getObjectMapper();
             this.payload = mapper.writeValueAsString(payload);
-
-            this.payload = this.payload
-                    .replace("%", "%25")
-                    .replace("=", "3D")
-                    .replace(" ", "%20")
-                    .replace("\n", "%0A")
-                    .replace("+", "%2B")
-                    .replace("-", "%2D")
-                    .replace("#", "%23")
-                    .replace("&", "%26");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -103,7 +93,19 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
         if (method == HttpMethod.GET) {
             if (this.payload == null) {
                 return this.targetUrl;
-            } else if (this.targetUrl.contains("?")) {
+            }
+
+            this.payload = this.payload
+                    .replace("%", "%25")
+                    .replace("=", "3D")
+                    .replace(" ", "%20")
+                    .replace("\n", "%0A")
+                    .replace("+", "%2B")
+                    .replace("-", "%2D")
+                    .replace("#", "%23")
+                    .replace("&", "%26");
+
+            if (this.targetUrl.contains("?")) {
                 return this.targetUrl + "&payload=" + this.payload;
             } else {
                 return this.targetUrl + "?payload=" + this.payload;
