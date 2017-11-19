@@ -15,7 +15,7 @@ to exchange POJO objects with a remote server.
 ```
 dependencies {
   // other dependencies ...
-  compile 'sfllhkhan95.android.rest:api:1.1.0'
+  compile 'sfllhkhan95.android.rest:api:1.1.1'
 }
 ```
 3. Add the following packaging options:
