@@ -23,10 +23,20 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
     private String payload;
     private ViewGroup statusContainer;
 
+    private HttpMethod method = HttpMethod.GET;
+
     public HttpRequest(@NotNull HttpServer httpServer, String targetUrl, @NotNull Class<Entity> type) {
         this.httpServer = httpServer;
         this.targetUrl = targetUrl;
         this.dataType = type;
+    }
+
+    public void setMethod(HttpMethod method) {
+        this.method = method;
+    }
+
+    public HttpMethod getMethod() {
+        return method;
     }
 
     public void setPayload(@NotNull Object payload) {
@@ -48,6 +58,10 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
         }
     }
 
+    public String getPayload() {
+        return payload;
+    }
+
     public void showStatus(@NotNull ViewGroup parent) {
         this.statusContainer = parent;
         ViewGroup.inflate(parent.getContext(), R.layout.status, parent);
@@ -63,7 +77,7 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
     protected final Entity doInBackground(Void... params) {
         Entity entity = null;
         try {
-            entity = (Entity) httpServer.getObject(buildUrl(), this.dataType);
+            entity = (Entity) httpServer.getObject(buildUrl(), this.dataType, this);
         } catch (IOException ignored) {
 
         }
@@ -86,12 +100,16 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
 
     @Contract(pure = true)
     private String buildUrl() {
-        if (this.payload == null) {
-            return this.targetUrl;
-        } else if (this.targetUrl.contains("?")) {
-            return this.targetUrl + "&payload=" + this.payload;
+        if (method == HttpMethod.GET) {
+            if (this.payload == null) {
+                return this.targetUrl;
+            } else if (this.targetUrl.contains("?")) {
+                return this.targetUrl + "&payload=" + this.payload;
+            } else {
+                return this.targetUrl + "?payload=" + this.payload;
+            }
         } else {
-            return this.targetUrl + "?payload=" + this.payload;
+            return this.targetUrl;
         }
     }
 
