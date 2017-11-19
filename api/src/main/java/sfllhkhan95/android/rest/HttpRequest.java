@@ -12,8 +12,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import java.io.IOException;
-
 public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
     private final HttpServer httpServer;
     private final String targetUrl;
@@ -68,11 +66,15 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
         Entity entity = null;
         try {
             entity = (Entity) httpServer.getObject(buildUrl(), this.dataType, this);
-        } catch (IOException ignored) {
-
+        } catch (Exception ex) {
+            onExecuteFailed(ex);
         }
 
         return entity;
+    }
+
+    protected void onExecuteFailed(Exception ex) {
+
     }
 
     @Override
