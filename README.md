@@ -4,6 +4,7 @@ to exchange POJO objects with a remote server.
 
 ## Features
 1. Make HTTP GET requests to a remote web server.
+1. Make HTTP POST requests to a remote web server.
 2. Send POJO class objects in HTTP requests.
 3. Receive POJO class objects in HTTP response.
 
@@ -14,7 +15,7 @@ to exchange POJO objects with a remote server.
 ```
 dependencies {
   // other dependencies ...
-  compile 'sfllhkhan95.android.rest:api:1.0.0'
+  compile 'sfllhkhan95.android.rest:api:1.1.0'
 }
 ```
 3. Add the following packaging options:
@@ -92,6 +93,19 @@ iSaid.setGreeting("Hello, Server!");
 request.setPayload(iSaid);
 ```
 Note that requested object and payload do not need to be objects of same class.
+
+### Setting request method
+By default, all requests made through DroidREST use the HTTP GET method. To use the method of your choice, call the `HttpRequest#setMethod` method with either of the `HttpMethod.GET` or `HttpMethod.POST` as argument to the method call.
+
+For example, to make a POST request, you would do,
+```
+import sfllhkhan95.android.rest.HttpMethod;
+
+// ...
+
+request.setMethod(HttpMethod.POST);
+```
+
 ### Receiving the requested object
 Implement the `ResponseHandler` interface to receive the requested object.
 ```
