@@ -1,1 +1,1 @@
-include ':demo', ':api'
+include ':demo', ':rest'

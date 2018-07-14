@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 5
-        versionName "1.2.0"
+        versionCode 6
+        versionName "2.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -46,9 +46,9 @@ ext {
     libraryDescription = 'DroidREST provides interface to Android applications for exchanging POJO objects with a remote server.'
 
     siteUrl = 'https://github.com/saifkhichi96/droid-rest'
-    gitUrl = 'https://github.com/saifkhichi96/droid-resty.git'
+    gitUrl = 'https://github.com/saifkhichi96/droid-rest.git'
 
-    libraryVersion = '1.2.0'
+    libraryVersion = '2.0.0'
 
     developerId = '1'
     developerName = 'Muhammad Saif Ullah Khan'
