@@ -8,6 +8,13 @@ to exchange POJO objects with a remote server.
 2. Send POJO class objects in HTTP requests.
 3. Receive POJO class objects in HTTP response.
 
+## Release Notes
+### v2.0.1
+Deprecated classes removed. All communication to be done through the HttpTask class.
+
+### Older Versions
+Support for older versions has been officially dropped. They are no longer available for use in Gradle.
+
 # How to Use
 ## Installation
 1. Open  `build.gradle` file of your Android project's module
@@ -15,7 +22,7 @@ to exchange POJO objects with a remote server.
 ```
 dependencies {
   // other dependencies ...
-  compile 'sfllhkhan95.android.rest:api:1.1.1'
+  compile 'sfllhkhan95.android.rest:api:2.0.1'
 }
 ```
 3. Add the following packaging options:
@@ -76,43 +83,41 @@ public class Greeting {
   }
 }
 ```
-### Creating a HTTP request
-Use the generic `HttpRequest` class to instantiate a new request. You have to define the type of object which you are requesting from the server, as demonstrated in the code sample below.
+### Creating a HTTP task
+Use the generic `HttpTask` class to instantiate a new asynchronous request. You have to define the type of object which you are requesting from the server and the type of payload (if any) as demonstrated in the code sample below.
 ```
-HttpRequest<Greeting> request = new HttpRequest<>(
-  WebServer.getInstance(),    // instance of receiving server
-  "file/on/server.php",       // path of server file which will handle the request
-  Greeting.class              // type of object requested
+HttpTask<Greeting, Greeting> httpTask =  
+  new HttpTask.Builder<Greeting, Greeting>(Greeting.class) // type of object requested
+  .setRequestUrl("file/on/server.php")                     // path of server file which will handle the request
+  .setMethod(HttpMethod.POST)                              // type of request (default: GET)
+  .create(WebServer.getInstance())                         // instance of receiving server
+  ,
+  
   );
 ```
 
-Each request may also optionally include a payload. A payload here is a POJO object which you want to send to the webserver.
+Each request may also optionally include a payload. A payload here is a POJO object which you want to send to the remote server.
 ```
 Greeting iSaid =  new Greeting();
 iSaid.setGreeting("Hello, Server!");
-request.setPayload(iSaid);
 ```
+
+Call `HttpTask.Builder#setPayload(iSaid)` while creating the `HttpTask` object.
+
 Note that requested object and payload do not need to be objects of same class.
 
-### Setting request method
-By default, all requests made through DroidREST use the HTTP GET method. To use the method of your choice, call the `HttpRequest#setMethod` method with either of the `HttpMethod.GET` or `HttpMethod.POST` as argument to the method call.
-
-For example, to make a POST request, you would do,
-```
-import sfllhkhan95.android.rest.HttpMethod;
-
-// ...
-
-request.setMethod(HttpMethod.POST);
-```
-
 ### Receiving the requested object
-Implement the `ResponseHandler` interface to receive the requested object.
+Implement the `ResponseListener` interface to receive the requested object.
 ```
-public class GreetingReceiver implements ResponseHandler<Greeting> {
+public class GreetingReceiver implements ResponseListener<Greeting> {
   @Override
-  public void onResponseReceived(@Nullable Greeting greeting) {
-    // App code here
+  public void onRequestSuccessful(@NonNull Greeting greeting) {
+    // Process response here
+  }
+  
+  @Override
+  public void onRequestFailed(@NonNull Exception ex) {
+    // Handle errors here
   }
 }
 ```
@@ -120,5 +125,5 @@ And finally ...
 ### Sending the request
 ```
 GreetingReceiver receiver = new GreetingReceiver();
-request.sendRequest(receiver);
+task.startAsync(receiver);
 ```

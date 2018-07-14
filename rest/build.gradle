@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 6
-        versionName "2.0.0"
+        versionCode 7
+        versionName "2.0.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -48,12 +48,12 @@ ext {
     siteUrl = 'https://github.com/saifkhichi96/droid-rest'
     gitUrl = 'https://github.com/saifkhichi96/droid-rest.git'
 
-    libraryVersion = '2.0.0'
+    libraryVersion = '2.0.1'
 
     developerId = '1'
     developerName = 'Muhammad Saif Ullah Khan'
     developerEmail = 'saifkhichi96@gmail.com'
-    organization = 'AspiraSoft'
+    organization = ''
     licenseName = 'MIT License'
     licenseUrl = 'https://opensource.org/licenses/MIT'
     allLicenses = ["MIT"]
