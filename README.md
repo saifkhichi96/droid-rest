@@ -22,7 +22,7 @@ Support for older versions has been officially dropped. They are no longer avail
 ```
 dependencies {
   // other dependencies ...
-  compile 'sfllhkhan95.android.rest:api:2.0.1'
+  compile 'co.aspirasoft.apis:rest:2.0.1'
 }
 ```
 3. Add the following packaging options:
