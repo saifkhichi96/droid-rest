@@ -1,14 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.0"
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 26
-        versionCode 3
-        versionName "1.1.1"
+        targetSdkVersion 28
+        versionCode 5
+        versionName "1.2.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -29,41 +29,36 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
-    compile 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
-    compile 'org.jetbrains:annotations-java5:15.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'org.springframework.android:spring-android-rest-template:1.0.1.RELEASE'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+    implementation 'com.android.support:support-annotations:28.0.0-alpha3@jar'
 }
 
 ext {
-    //For bintray and jcenter distribution
     bintrayRepo = 'maven'
     bintrayName = 'droid-rest'
 
-    publishedGroupId = 'sfllhkhan95.android.rest'
+    publishedGroupId = 'co.aspirasoft.apis'
     libraryName = 'DroidREST'
-    artifact = 'api'
+    artifact = 'rest'
 
     libraryDescription = 'DroidREST provides interface to Android applications for exchanging POJO objects with a remote server.'
 
-    siteUrl = 'https://github.com/sfllhkhan95/droid-rest'
-    gitUrl = 'https://github.com/sfllhkhan95/droid-resty.git'
+    siteUrl = 'https://github.com/saifkhichi96/droid-rest'
+    gitUrl = 'https://github.com/saifkhichi96/droid-resty.git'
 
-    libraryVersion = '1.1.1'
+    libraryVersion = '1.2.0'
 
     developerId = '1'
     developerName = 'Muhammad Saif Ullah Khan'
     developerEmail = 'saifkhichi96@gmail.com'
-    organization = ''
-    licenseName = 'MIT License'  //Example for license
+    organization = 'AspiraSoft'
+    licenseName = 'MIT License'
     licenseUrl = 'https://opensource.org/licenses/MIT'
     allLicenses = ["MIT"]
 
 }
-//These two remote files contain Bintray configuration as described above.
+
 apply from: 'https://raw.githubusercontent.com/quangctkm9207/template-files/master/android/gradle/install.gradle'
 apply from: 'https://raw.githubusercontent.com/quangctkm9207/template-files/master/android/gradle/bintray.gradle'
