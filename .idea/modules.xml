@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
       <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/droid-rest.iml" filepath="$PROJECT_DIR$/droid-rest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/droid-rest-android.iml" filepath="$PROJECT_DIR$/droid-rest-android.iml" />
     </modules>
   </component>
 </project>
