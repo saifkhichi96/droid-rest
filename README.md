@@ -90,10 +90,7 @@ HttpTask<Greeting, Greeting> httpTask =
   new HttpTask.Builder<Greeting, Greeting>(Greeting.class) // type of object requested
   .setRequestUrl("file/on/server.php")                     // path of server file which will handle the request
   .setMethod(HttpMethod.POST)                              // type of request (default: GET)
-  .create(WebServer.getInstance())                         // instance of receiving server
-  ,
-  
-  );
+  .create(WebServer.getInstance());                        // instance of receiving server
 ```
 
 Each request may also optionally include a payload. A payload here is a POJO object which you want to send to the remote server.
