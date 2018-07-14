@@ -1,44 +1,79 @@
 package co.aspirasoft.apis.rest;
 
-import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
  *
  */
-public abstract class HttpTask<Payload, Response> {
+public class HttpTask<P, R> {
 
-    private final String requestUrl;
-    private final Class<Response> responseType;
+    private HttpServer httpServer;
+    private String requestUrl;
+    private Class<R> responseType;
 
     @Nullable
-    private Payload payload;
+    private P payload;
     private HttpMethod method;
 
-    protected HttpTask(String requestUrl, Class<Response> responseType) {
+    private HttpTask() {
+        requestUrl = "";
+        payload = null;
+        method = HttpMethod.GET;
+    }
+
+    private HttpTask(String requestUrl, Class<R> responseType) {
         this.requestUrl = requestUrl;
         this.responseType = responseType;
         this.method = HttpMethod.GET;
     }
 
-    @CallSuper
-    protected void setPayload(@NonNull Payload payload) {
-        this.payload = payload;
-    }
-
-    protected void setMethod(@NonNull HttpMethod method) {
-        this.method = method;
-    }
-
-    public final void startAsync(HttpServer httpServer, ResponseListener<Response> responseListener) {
-        HttpRequest<Response> request = new HttpRequest<>(httpServer, requestUrl, responseType);
+    private void execute(@Nullable ResponseListener<R> responseListener) {
+        HttpRequest<R> request = new HttpRequest<>(httpServer, requestUrl, responseType);
         request.setMethod(method);
         if (payload != null) {
             request.setPayload(payload);
         }
 
         request.sendRequest(responseListener);
+    }
+
+    public final void startAsync(@NonNull ResponseListener<R> responseListener) {
+        execute(responseListener);
+    }
+
+    public final void startAsync() {
+        execute(null);
+    }
+
+    public static class Builder<Payload, Response> {
+
+        private HttpTask<Payload, Response> task = new HttpTask<>();
+
+        public Builder(@NonNull Class<Response> responseType) {
+            task.responseType = responseType;
+        }
+
+        public Builder<Payload, Response> setPayload(@NonNull Payload payload) {
+            task.payload = payload;
+            return this;
+        }
+
+        public Builder<Payload, Response> setRequestUrl(String requestUrl) {
+            task.requestUrl = requestUrl;
+            return this;
+        }
+
+        public Builder<Payload, Response> setMethod(@NonNull HttpMethod method) {
+            task.method = method;
+            return this;
+        }
+
+        public HttpTask<Payload, Response> create(@NonNull HttpServer server) {
+            task.httpServer = server;
+            return task;
+        }
+
     }
 
 }

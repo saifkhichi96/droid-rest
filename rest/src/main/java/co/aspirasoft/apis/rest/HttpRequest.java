@@ -16,6 +16,7 @@ final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
     private final String targetUrl;
     private final Class<Response> responseType;
 
+    @Nullable
     private ResponseListener<Response> responseListener;
 
     private String payload;
@@ -49,7 +50,7 @@ final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
         }
     }
 
-    void sendRequest(ResponseListener<Response> responseListener) {
+    void sendRequest(@Nullable ResponseListener<Response> responseListener) {
         this.responseListener = responseListener;
         this.execute();
     }
