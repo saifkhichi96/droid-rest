@@ -1,8 +1,9 @@
-package sfllhkhan95.android.rest;
+package co.aspirasoft.apis.rest;
+
+import android.support.annotation.NonNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 import java.io.BufferedInputStream;
@@ -25,18 +26,26 @@ public class HttpServer {
 
     private final String address;
 
-    public HttpServer(@NotNull String address) throws MalformedURLException {
-        if (!address.endsWith("/")) {
-            this.address = address + "/";
-        } else {
-            this.address = address;
-        }
+    /**
+     * Default public constructor.
+     *
+     * @param address HTTP address of the server
+     * @throws MalformedURLException exception thrown if given address is invalid
+     */
+    public HttpServer(@NonNull String address) throws MalformedURLException {
+        // Append backslash to the URL if not already added
+        this.address = !address.endsWith("/") ? address + "/" : address;
 
-        new URL(address);
-        if (address.equals("/")) {
-            throw new MalformedURLException();
+        // Verify URL correctness
+        try {
+            new URL(address);
+            if (address.equals("/")) {
+                throw new MalformedURLException();
+            }
+        } catch (MalformedURLException ex) {
+            String message = "Invalid HTTP address";
+            throw new MalformedURLException(message);
         }
-
     }
 
     private String getQuery(List<AbstractMap.SimpleEntry<String, String>> params)
@@ -63,7 +72,8 @@ public class HttpServer {
      *
      * @return content of the web document
      */
-    synchronized Object getObject(String file, Class<?> dataType, HttpRequest httpRequest) throws IOException {
+
+    synchronized <T> T getObject(String file, Class<? extends T> dataType, HttpRequest httpRequest) throws IOException {
         // Establish a new HTTP connection with the remote web server
         HttpURLConnection connection = connect(this.address + file);
 
@@ -99,22 +109,19 @@ public class HttpServer {
         connection.disconnect();
 
         ObjectMapper mapper = new MappingJackson2HttpMessageConverter().getObjectMapper();
-        Object o = mapper.readValue(content, dataType);
-        return o;
+        return mapper.readValue(content, dataType);
     }
 
     /**
      * Establishes an HTTP connection with the remote web server and requests the a remote web
      * document at the given path.
      *
+     * @param address http address of the web document to connect to
      * @return an instance of HttpURLConnection established with the requested web document
      * @throws IOException thrown if there is an error communicating with the web server
      */
-    private HttpURLConnection connect(String file) throws IOException {
-        // Create a URL
-        URL url = new URL(file);
-
-        // Connect to web page at given url and return connection
+    private HttpURLConnection connect(String address) throws IOException {
+        URL url = new URL(address);
         return (HttpURLConnection) url.openConnection();
     }
 

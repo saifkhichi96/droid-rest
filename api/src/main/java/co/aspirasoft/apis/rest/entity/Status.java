@@ -1,4 +1,4 @@
-package sfllhkhan95.android.rest.entity;
+package co.aspirasoft.apis.rest.entity;
 
 /**
  * General status messages used to exchange information with the server.

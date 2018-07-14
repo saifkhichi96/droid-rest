@@ -1,4 +1,4 @@
-package sfllhkhan95.android.rest.demo;
+package co.aspirasoft.apis.demo;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,10 +10,9 @@ import android.widget.TextView;
 
 import java.net.MalformedURLException;
 
-import sfllhkhan95.android.rest.HttpMethod;
-import sfllhkhan95.android.rest.HttpRequest;
-import sfllhkhan95.android.rest.HttpServer;
-import sfllhkhan95.android.rest.ResponseHandler;
+import co.aspirasoft.apis.rest.HttpMethod;
+import co.aspirasoft.apis.rest.HttpRequest;
+import co.aspirasoft.apis.rest.HttpServer;
 
 public class DemoActivity extends AppCompatActivity implements ResponseHandler<Greeting> {
 

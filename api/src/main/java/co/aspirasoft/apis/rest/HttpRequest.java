@@ -1,43 +1,46 @@
-package sfllhkhan95.android.rest;
-
+package co.aspirasoft.apis.rest;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.ViewGroup;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
+
+final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
+
     private final HttpServer httpServer;
     private final String targetUrl;
-    private final Class<Entity> dataType;
+    private final Class<Response> responseType;
 
-    private ResponseHandler<Entity> responseHandler;
+    private ResponseListener<Response> responseListener;
+
     private String payload;
-    private ViewGroup statusContainer;
 
     private HttpMethod method = HttpMethod.GET;
 
-    public HttpRequest(@NotNull HttpServer httpServer, String targetUrl, @NotNull Class<Entity> type) {
+    HttpRequest(@NonNull HttpServer httpServer, String targetUrl, @NonNull Class<Response> type) {
         this.httpServer = httpServer;
         this.targetUrl = targetUrl;
-        this.dataType = type;
+        this.responseType = type;
     }
 
-    public void setMethod(HttpMethod method) {
-        this.method = method;
-    }
-
-    public HttpMethod getMethod() {
+    HttpMethod getMethod() {
         return method;
     }
 
-    public void setPayload(@NotNull Object payload) {
+    void setMethod(HttpMethod method) {
+        this.method = method;
+    }
+
+    String getPayload() {
+        return payload;
+    }
+
+    void setPayload(@NonNull Object payload) {
         try {
             ObjectMapper mapper = new MappingJackson2HttpMessageConverter().getObjectMapper();
             this.payload = mapper.writeValueAsString(payload);
@@ -46,51 +49,40 @@ public class HttpRequest<Entity> extends AsyncTask<Void, Void, Entity> {
         }
     }
 
-    public String getPayload() {
-        return payload;
-    }
-
-    public void showStatus(@NotNull ViewGroup parent) {
-        this.statusContainer = parent;
-        ViewGroup.inflate(parent.getContext(), R.layout.status, parent);
-    }
-
-    public void sendRequest(ResponseHandler<Entity> responseHandler) {
-        this.responseHandler = responseHandler;
+    void sendRequest(ResponseListener<Response> responseListener) {
+        this.responseListener = responseListener;
         this.execute();
     }
 
     @Nullable
     @Override
-    protected final Entity doInBackground(Void... params) {
-        Entity entity = null;
+    protected final Response doInBackground(Void... params) {
+        Response response = null;
         try {
-            entity = (Entity) httpServer.getObject(buildUrl(), this.dataType, this);
+            response = httpServer.getObject(buildUrl(), this.responseType, this);
         } catch (Exception ex) {
-            onExecuteFailed(ex);
+            if (responseListener != null) {
+                responseListener.onRequestFailed(ex);
+            }
         }
-
-        return entity;
-    }
-
-    protected void onExecuteFailed(Exception ex) {
-
+        return response;
     }
 
     @Override
-    protected final void onPostExecute(@Nullable Entity entity) {
-        try {
-            statusContainer.removeView(statusContainer.getChildAt(statusContainer.getChildCount() - 1));
-        } catch (NullPointerException ignored) {
+    protected final void onPostExecute(@Nullable Response response) {
+        if (responseListener != null) {
+            try {
+                if (response == null) {
+                    throw new NullPointerException("Requested object not found.");
+                }
 
-        } finally {
-            if (responseHandler != null) {
-                responseHandler.onResponseReceived(entity);
+                responseListener.onRequestSuccessful(response);
+            } catch (Exception ex) {
+                responseListener.onRequestFailed(ex);
             }
         }
     }
 
-    @Contract(pure = true)
     private String buildUrl() {
         if (method == HttpMethod.GET) {
             if (this.payload == null) {
