@@ -1,20 +1,20 @@
 package co.aspirasoft.apis.demo;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.net.MalformedURLException;
 
 import co.aspirasoft.apis.rest.HttpMethod;
-import co.aspirasoft.apis.rest.HttpRequest;
 import co.aspirasoft.apis.rest.HttpServer;
+import co.aspirasoft.apis.rest.HttpTask;
+import co.aspirasoft.apis.rest.ResponseListener;
 
-public class DemoActivity extends AppCompatActivity implements ResponseHandler<Greeting> {
+public class DemoActivity extends AppCompatActivity implements ResponseListener<Greeting> {
 
     private HttpServer httpServer;
 
@@ -51,32 +51,35 @@ public class DemoActivity extends AppCompatActivity implements ResponseHandler<G
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onResponseReceived(@Nullable Greeting entity) {
-        TextView greetingIdText = (TextView) findViewById(R.id.id_value);
-        TextView greetingContentText = (TextView) findViewById(R.id.content_value);
-
-        if (entity != null) {
-            greetingIdText.setText(entity.getSender());
-            greetingContentText.setText(entity.getMessage());
-        }
-    }
-
     private void sendRequest(String method) {
-        HttpRequest<Greeting> httpRequest = new HttpRequest<>(httpServer, "demo-server-side.php", Greeting.class);
-        httpRequest.showStatus((ViewGroup) findViewById(R.id.activity_demo));
-
         Greeting greeting = new Greeting();
         greeting.setSender(getString(R.string.app_name));
         greeting.setMessage("To be, or to not be?!");
-        httpRequest.setPayload(greeting);
 
-        if (method.equals("get")) {
-            httpRequest.setMethod(HttpMethod.GET);
-        } else if (method.equals("post")) {
-            httpRequest.setMethod(HttpMethod.POST);
-        }
+        HttpTask<Greeting, Greeting> task = new HttpTask.Builder<Greeting, Greeting>(Greeting.class)
+                .setMethod(method.equals("post") ? HttpMethod.POST : HttpMethod.GET)
+                .setRequestUrl("demo-server-side.php")
+                .setPayload(greeting)
+                .create(httpServer);
 
-        httpRequest.sendRequest(this);
+        task.startAsync(this);
+    }
+
+    @Override
+    public void onRequestSuccessful(@NonNull Greeting greeting) {
+        TextView greetingIdText = findViewById(R.id.id_value);
+        TextView greetingContentText = findViewById(R.id.content_value);
+
+        greetingIdText.setText(greeting.getSender());
+        greetingContentText.setText(greeting.getMessage());
+    }
+
+    @Override
+    public void onRequestFailed(@NonNull Exception ex) {
+        TextView greetingIdText = findViewById(R.id.id_value);
+        TextView greetingContentText = findViewById(R.id.content_value);
+
+        greetingIdText.setText(ex.getClass().getSimpleName());
+        greetingContentText.setText(ex.getMessage());
     }
 }
