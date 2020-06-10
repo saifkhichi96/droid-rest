@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">DroidREST Demo</string>
+
+  <string name="message_sender">Sender</string>
+  <string name="message_body">[message-body]</string>
+</resources>

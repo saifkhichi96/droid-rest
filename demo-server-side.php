@@ -1,11 +1,11 @@
 <?php
-	class Greeting {
+	class Message {
 		public $sender;
-		public $message;
+		public $body;
 
-		function Greeting($sender="", $message=""){
+		function Message($sender="", $body=""){
 			$this->sender = $sender;
-			$this->message = $message;
+			$this->body = $body;
 		}
 
 		function getJsonData(){
@@ -42,24 +42,25 @@
 // If a GET request is made
 if (isset($_GET["payload"])) {
 	$stdObj = json_decode($_GET["payload"]);
-	$greeting = recast(new Greeting(), $stdObj);
-	$greeting->message = "Hi, ".$greeting->sender."! You said \"".$greeting->message."\" using GET method.";
-	$greeting->sender = "Server";	
+	$message = recast(new Message(), $stdObj);
+	$message->sender = "Server";
+	$message->body = md5($message->body);
 }
 
 // If a POST request is made
 else if (isset($_POST["payload"])) {
 	$stdObj = json_decode($_POST["payload"]);
-	$greeting = recast(new Greeting(), $stdObj);
-	$greeting->message = "Hi, ".$greeting->sender."! You said \"".$greeting->message."\" using POST method.";	
-	$greeting->sender = "Server";
+	$message = recast(new Message(), $stdObj);
+	$message->sender = "Server";
+	$message->body = md5($message->body);
 }
 
-// If no GET/POST request was made
 else {
-	$greeting = new Greeting("Server", "Hi, Client! You did not say anything.");
+		$message = new Message();
+		$message->sender = "Sender";
+		$message->body = "Hi. You did not say anything.";
 }
 
 header("Content-type: application/json");
-echo json_encode($greeting->getJsonData());
+echo json_encode($message->getJsonData());
 ?>
