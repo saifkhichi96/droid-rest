@@ -17,12 +17,32 @@ Support for older versions has been officially dropped. They are no longer avail
 
 # How to Use
 ## Installation
-1. Open  `build.gradle` file of your Android project's module
-2. Add dependency to this library using:
+1. Open the project level `build.gradle` file and add the following code:
+```
+buildscript {
+    repositories {
+        // ...
+        maven() {
+            url 'https://dl.bintray.com/saifkhichi96/maven/'
+        }
+    }
+    // ...
+}
+
+allprojects {
+    repositories {
+        // ...
+        maven() {
+            url 'https://dl.bintray.com/saifkhichi96/maven/'
+        }
+    }
+}
+```
+2. Open the module level `build.gradle` file and add dependency to this library using:
 ```
 dependencies {
   // other dependencies ...
-  compile 'sfllhkhan95.android.rest:api:2.0.1'
+  implementation 'co.aspirasoft.apis:rest:2.0.1'
 }
 ```
 3. Add the following packaging options:
