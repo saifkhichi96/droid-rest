@@ -1,18 +1,10 @@
 package co.aspirasoft.apis.rest;
 
-import android.support.annotation.NonNull;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +24,7 @@ public class HttpServer {
      * @param address HTTP address of the server
      * @throws MalformedURLException exception thrown if given address is invalid
      */
-    public HttpServer(@NonNull String address) throws MalformedURLException {
+    public HttpServer(@NotNull String address) throws MalformedURLException {
         // Append backslash to the URL if not already added
         this.address = !address.endsWith("/") ? address + "/" : address;
 
@@ -73,7 +65,7 @@ public class HttpServer {
      * @return content of the web document
      */
 
-    synchronized <T> T getObject(String file, Class<? extends T> dataType, HttpRequest httpRequest) throws IOException {
+    synchronized <T> T getObject(String file, Class<? extends T> dataType, HttpRequest<T> httpRequest) throws IOException {
         // Establish a new HTTP connection with the remote web server
         HttpURLConnection connection = connect(this.address + file);
 
@@ -90,15 +82,14 @@ public class HttpServer {
             }
 
             OutputStream os = connection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
             writer.write(getQuery(params));
             writer.flush();
             writer.close();
             os.close();
         }
 
-        // Read the remote file and create an input stream from the received data
+        // Read the remote file and build an input stream from the received data
         InputStream inputStream = new BufferedInputStream(connection.getInputStream());
 
         // Read the whole content of the remote file and save it locally

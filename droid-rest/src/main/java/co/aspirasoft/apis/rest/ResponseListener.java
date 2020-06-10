@@ -1,6 +1,6 @@
 package co.aspirasoft.apis.rest;
 
-import android.support.annotation.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * ResponseListener defines an interface for handling success and failure messages received from
@@ -9,9 +9,9 @@ import android.support.annotation.NonNull;
  * @author MuhammadSaifullah
  * @version 1.0
  */
-public interface ResponseListener<Entity> {
+public interface ResponseListener<@NotNull Entity> {
 
-    void onRequestSuccessful(@NonNull Entity response);
+    void onRequestSuccessful(@NotNull Entity response);
 
-    void onRequestFailed(@NonNull Exception ex);
+    void onRequestFailed(@NotNull Exception ex);
 }

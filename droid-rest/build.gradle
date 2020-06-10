@@ -1,0 +1,71 @@
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+version '2.0.0'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation group: 'org.springframework', name: 'spring-web', version: '3.2.0.RELEASE'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.4'
+    implementation 'org.jetbrains:annotations:15.0'
+    implementation 'junit:junit:4.12'
+}
+
+tasks.register("sourcesJar", Jar) {
+    from sourceSets.main.allJava
+    classifier "sources"
+}
+
+tasks.register("javadocJar", Jar) {
+    from javadoc
+    classifier "javadoc"
+}
+
+publishing {
+    publications {
+        myPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                name = "DroidREST"
+                description = "DroidREST provides interface to Android applications for exchanging POJO objects with a remote server."
+                url = "https://github.com/saifkhichi96/droid-rest"
+                licenses {
+                    license {
+                        name = "MIT License"
+                        url = "https://opensource.org/licenses/MIT"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "saifkhichi96"
+                        name = "Muhammad Saif Ullah Khan"
+                        email = "saifkhichi96@gmail.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/saifkhichi96/droid-rest.git"
+                    developerConnection = "scm:git:https://github.com/saifkhichi96/droid-rest.git"
+                    url = "https://github.com/saifkhichi96/droid-rest"
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty('saifkhichi96')
+    key = project.hasProperty('a384b6d3dd6ee3631a3c3c86c80ed5dc1284930c')
+    publications = ['myPublication']
+    pkg {
+        repo = 'maven'
+        name = 'droid-rest'
+        vcsUrl = 'https://github.com/saifkhichi96/droid-rest.git'
+        licenses = ['MIT']
+        version {
+            name = '2.0.0'
+        }
+    }
+}

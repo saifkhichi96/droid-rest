@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
-      <module fileurl="file://$PROJECT_DIR$/droid-rest-android.iml" filepath="$PROJECT_DIR$/droid-rest-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/rest/rest.iml" filepath="$PROJECT_DIR$/rest/rest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/android.iml" filepath="$PROJECT_DIR$/android/android.iml" group="sources/android" />
+      <module fileurl="file://$PROJECT_DIR$/droid-rest/droid-rest.iml" filepath="$PROJECT_DIR$/droid-rest/droid-rest.iml" group="sources/droid-rest" />
+      <module fileurl="file://$PROJECT_DIR$/sources.iml" filepath="$PROJECT_DIR$/sources.iml" group="sources" />
     </modules>
   </component>
 </project>

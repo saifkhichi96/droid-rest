@@ -1,7 +1,7 @@
 package co.aspirasoft.apis.rest;
 
 /**
- * HttpMethod enumerates the types of {@link HttpRequest}s that can be made.
+ * HttpMethod enumerates the supported {@link HttpRequest} types.
  *
  * @author saifkhichi96
  */

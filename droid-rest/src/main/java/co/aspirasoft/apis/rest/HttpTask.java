@@ -1,7 +1,7 @@
 package co.aspirasoft.apis.rest;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  *
@@ -38,7 +38,7 @@ public class HttpTask<P, R> {
         request.sendRequest(responseListener);
     }
 
-    public final void startAsync(@NonNull ResponseListener<R> responseListener) {
+    public final void startAsync(@NotNull ResponseListener<R> responseListener) {
         execute(responseListener);
     }
 
@@ -48,13 +48,13 @@ public class HttpTask<P, R> {
 
     public static class Builder<Payload, Response> {
 
-        private HttpTask<Payload, Response> task = new HttpTask<>();
+        private final HttpTask<Payload, Response> task = new HttpTask<>();
 
-        public Builder(@NonNull Class<Response> responseType) {
+        public Builder(@NotNull Class<Response> responseType) {
             task.responseType = responseType;
         }
 
-        public Builder<Payload, Response> setPayload(@NonNull Payload payload) {
+        public Builder<Payload, Response> setPayload(@NotNull Payload payload) {
             task.payload = payload;
             return this;
         }
@@ -64,12 +64,12 @@ public class HttpTask<P, R> {
             return this;
         }
 
-        public Builder<Payload, Response> setMethod(@NonNull HttpMethod method) {
+        public Builder<Payload, Response> setMethod(@NotNull HttpMethod method) {
             task.method = method;
             return this;
         }
 
-        public HttpTask<Payload, Response> create(@NonNull HttpServer server) {
+        public HttpTask<Payload, Response> build(@NotNull HttpServer server) {
             task.httpServer = server;
             return task;
         }

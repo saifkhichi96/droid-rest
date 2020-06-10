@@ -1,16 +1,19 @@
 package co.aspirasoft.apis.rest;
 
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
+import java.net.URLEncoder;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
+
+final class HttpRequest<Response> {
 
     private final HttpServer httpServer;
     private final String targetUrl;
@@ -23,7 +26,7 @@ final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
 
     private HttpMethod method = HttpMethod.GET;
 
-    HttpRequest(@NonNull HttpServer httpServer, String targetUrl, @NonNull Class<Response> type) {
+    HttpRequest(@NotNull HttpServer httpServer, String targetUrl, @NotNull Class<Response> type) {
         this.httpServer = httpServer;
         this.targetUrl = targetUrl;
         this.responseType = type;
@@ -41,7 +44,7 @@ final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
         return payload;
     }
 
-    void setPayload(@NonNull Object payload) {
+    void setPayload(@NotNull Object payload) {
         try {
             ObjectMapper mapper = new MappingJackson2HttpMessageConverter().getObjectMapper();
             this.payload = mapper.writeValueAsString(payload);
@@ -52,12 +55,15 @@ final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
 
     void sendRequest(@Nullable ResponseListener<Response> responseListener) {
         this.responseListener = responseListener;
-        this.execute();
+        try {
+            this.execute();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Nullable
-    @Override
-    protected final Response doInBackground(Void... params) {
+    protected final Response doInBackground() {
         Response response = null;
         try {
             response = httpServer.getObject(buildUrl(), this.responseType, this);
@@ -69,7 +75,6 @@ final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
         return response;
     }
 
-    @Override
     protected final void onPostExecute(@Nullable Response response) {
         if (responseListener != null) {
             try {
@@ -85,29 +90,27 @@ final class HttpRequest<Response> extends AsyncTask<Void, Void, Response> {
     }
 
     private String buildUrl() {
-        if (method == HttpMethod.GET) {
-            if (this.payload == null) {
-                return this.targetUrl;
-            }
+        if (method == HttpMethod.GET && payload != null) {
+            // Encode payload
+            this.payload = URLEncoder.encode(payload);
 
-            this.payload = this.payload
-                    .replace("%", "%25")
-                    .replace("=", "3D")
-                    .replace(" ", "%20")
-                    .replace("\n", "%0A")
-                    .replace("+", "%2B")
-                    .replace("-", "%2D")
-                    .replace("#", "%23")
-                    .replace("&", "%26");
-
-            if (this.targetUrl.contains("?")) {
-                return this.targetUrl + "&payload=" + this.payload;
-            } else {
-                return this.targetUrl + "?payload=" + this.payload;
-            }
+            // Attach payload to URL
+            return this.targetUrl + (this.targetUrl.contains("?")
+                    ? "&payload=" + this.payload
+                    : "?payload=" + this.payload);
         } else {
             return this.targetUrl;
         }
+    }
+
+    private void execute() throws ExecutionException, InterruptedException {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Response> future = executor.submit(this::doInBackground);
+
+        Response response = future.get();
+        onPostExecute(response);
+
+        executor.shutdown();
     }
 
 }
