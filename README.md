@@ -1,21 +1,20 @@
-# Introduction
-DroidREST is an Android library, which provides a RESTful interface for Android applications
-to exchange POJO objects with a remote server.
+DroidREST is a Java library which provides an interface for client-side apps to exchange POJO objects with a web server.
+
+This library can be used to write different type of client-side programs (Java applets, Android applications, Kotlin programs, etc). DroidREST uses JSON to exchange data between clients and server, and the server can be implemented in any language which can receive and interpret JSON data. An example with PHP is provided [here](demo-server-side.php).
 
 ## Features
-1. Make HTTP GET requests to a remote web server.
-1. Make HTTP POST requests to a remote web server.
-2. Send POJO class objects in HTTP requests.
-3. Receive POJO class objects in HTTP response.
+1. Make HTTP GET requests to a remote server.
+2. Make HTTP POST requests to a remote server.
+3. Send POJO objects in HTTP requests.
+4. Receive POJO objects in HTTP response.
 
 ## Release Notes
-### v2.0.1
-Deprecated classes removed. All communication to be done through the HttpTask class.
+| Version | Release Notes | 
+|---------|---------------|
+| 2.1.0 | Converted formerly Android library to pure Java. |
+| 2.0.1 | Deprecated classes removed. All network requests should be managed using the [HttpTask](droid-rest/src/main/java/co/aspirasoft/apis/rest/HttpTask.java) class.|
+| Older versions | Support for older versions has been officially dropped. They are no longer available for use in Gradle.|
 
-### Older Versions
-Support for older versions has been officially dropped. They are no longer available for use in Gradle.
-
-# How to Use
 ## Installation
 1. Open the project level `build.gradle` file and add the following code:
 ```
@@ -42,7 +41,7 @@ allprojects {
 ```
 dependencies {
   // other dependencies ...
-  implementation 'co.aspirasoft.apis:rest:2.0.1'
+  implementation 'co.aspirasoft.apis:droid-rest:$latest_version'
 }
 ```
 3. Add the following packaging options:
@@ -55,6 +54,9 @@ android {
     exclude 'META-INF/license.txt'
     exclude 'META-INF/NOTICE'
     exclude 'META-INF/notice.txt'
+    exclude 'META-INF/spring.handlers'
+    exclude 'META-INF/spring.schemas'
+    exclude 'META-INF/spring.tooling'
   }
 }
 ```
@@ -67,7 +69,7 @@ Following sample code may be used as a starting point for your project.
 // package declaration
 
 import java.net.MalformedURLException;
-import sfllhkhan95.android.rest.HttpServer;
+import co.aspirasoft.apis.rest.HttpServer;
 
 public class WebServer extends HttpServer {
     private static WebServer ourInstance;
@@ -103,7 +105,7 @@ public class Greeting {
   }
 }
 ```
-### Creating a HTTP task
+### Creating an HTTP task
 Use the generic `HttpTask` class to instantiate a new asynchronous request. You have to define the type of object which you are requesting from the server and the type of payload (if any) as demonstrated in the code sample below.
 ```
 HttpTask<Greeting, Greeting> httpTask =  
