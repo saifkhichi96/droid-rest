@@ -1,1 +1,6 @@
-theme: jekyll-theme-minimal
+remote_theme: saifkhichi96/saifkhichi96
+baseurl: /droid-rest
+
+title: DroidREST
+description: A client-side Java library to make HTTP requests.
+
