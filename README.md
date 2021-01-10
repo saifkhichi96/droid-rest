@@ -9,14 +9,17 @@ This library can be used to write different type of client-side programs (Java a
 4. Receive POJO objects in HTTP response.
 
 ## Release Notes
-| Version | Release Notes | 
-|---------|---------------|
-| 2.1.0 | Converted formerly Android library to pure Java. |
-| 2.0.1 | Deprecated classes removed. All network requests should be managed using the [HttpTask](droid-rest/src/main/java/co/aspirasoft/apis/rest/HttpTask.java) class.|
-| Older versions | Support for older versions has been officially dropped. They are no longer available for use in Gradle.|
+
+| Version | Release Notes                                                                                          |
+|--------:|:-------------------------------------------------------------------------------------------------------|
+|  2.1.0  | Converted formerly Android library to pure Java.                                                       |
+|  2.0.1  | Deprecated classes removed. All network requests should be managed using the [HttpTask](droid-rest/src/main/java/co/aspirasoft/apis/rest/HttpTask.java) class.|
+| <2.0.1  | Support for older versions has been officially dropped. They are no longer available for use in Gradle.|
 
 ## Installation
+
 1. Open the project level `build.gradle` file and add the following code:
+
 ```
 buildscript {
     repositories {
@@ -37,14 +40,18 @@ allprojects {
     }
 }
 ```
+
 2. Open the module level `build.gradle` file and add dependency to this library using:
+
 ```
 dependencies {
   // other dependencies ...
   implementation 'co.aspirasoft.apis:droid-rest:$latest_version'
 }
 ```
+
 3. Add the following packaging options:
+
 ```
 android {
   // existing configurations ...
@@ -60,11 +67,15 @@ android {
   }
 }
 ```
+
 4. Sync gradle
+
 ## Defining a webserver
+
 `HttpServer` class defines connections to a remote server. You will need to pass an instance of this class to each `HttpRequest` you make. We recommend subclassing `HttpServer` in a singleton class which can then be used to access a shared instance of the webserver anywhere in the project.
 
 Following sample code may be used as a starting point for your project.
+
 ```
 // package declaration
 
@@ -90,8 +101,11 @@ public class WebServer extends HttpServer {
     }
 }
 ```
+
 ## Exchanging POJO objects with remote server
+
 Let us define a simple POJO class whose objects we want to send to and receive from the server.
+
 ```
 public class Greeting {
   private String greeting;
@@ -105,8 +119,11 @@ public class Greeting {
   }
 }
 ```
+
 ### Creating an HTTP task
+
 Use the generic `HttpTask` class to instantiate a new asynchronous request. You have to define the type of object which you are requesting from the server and the type of payload (if any) as demonstrated in the code sample below.
+
 ```
 HttpTask<Greeting, Greeting> httpTask =  
   new HttpTask.Builder<Greeting, Greeting>(Greeting.class) // type of object requested
@@ -116,6 +133,7 @@ HttpTask<Greeting, Greeting> httpTask =
 ```
 
 Each request may also optionally include a payload. A payload here is a POJO object which you want to send to the remote server.
+
 ```
 Greeting iSaid =  new Greeting();
 iSaid.setGreeting("Hello, Server!");
@@ -126,7 +144,9 @@ Call `HttpTask.Builder#setPayload(iSaid)` while creating the `HttpTask` object.
 Note that requested object and payload do not need to be objects of same class.
 
 ### Receiving the requested object
+
 Implement the `ResponseListener` interface to receive the requested object.
+
 ```
 public class GreetingReceiver implements ResponseListener<Greeting> {
   @Override
@@ -140,8 +160,11 @@ public class GreetingReceiver implements ResponseListener<Greeting> {
   }
 }
 ```
+
 And finally ...
+
 ### Sending the request
+
 ```
 GreetingReceiver receiver = new GreetingReceiver();
 task.startAsync(receiver);
